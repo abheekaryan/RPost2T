@@ -11,34 +11,32 @@ import json
 from time import sleep
 from datetime import datetime
 
-## SCRIPT 2
 credentials = {}
 
 credentials["token"] = os.environ.get('TOKEN')
 credentials["subreddit"] = os.environ.get('SUB')
 credentials["channel"] = os.environ.get('CHANNEL')
 
-token = credentials["token"]
-channel = credentials["channel"]
-sub = "dogpictures"
-start_time = datetime.utcnow().timestamp()
+log = logging.getLogger('doggo')
+log.setLevel(logging.DEBUG)
 
-
-## SCRIPT 3
 ch = logging.StreamHandler(sys.stdout)
 ch.setLevel(logging.DEBUG)
 formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
 ch.setFormatter(formatter)
 log.addHandler(ch)
 
-if credentials["token"] == "":
+if credentials["token"] == "": 
     raise RuntimeError('Bot token not found 🙁! Put bot token🔐 in credentials.json!')
 if credentials["subreddit"] == "":
     raise RuntimeError('Subreddit name not found 🙁! Enter the subreddit name📃 in credentials.json!')
 if credentials["channel"] == "":
     raise RuntimeError('Telegram Channel name not found 🙁! Enter the channel name📰 in credentials.json!')
 
-## SCRIPT 4
+token = credentials["token"]
+channel = credentials["channel"]
+sub = "dogpictures"
+start_time = datetime.utcnow().timestamp()
 
 def prev_submissions():
     try:
@@ -54,8 +52,6 @@ def write_submissions(sub_id):
     except:
         log.expection("Error writing sub ID!")
 
-## SCRIPT 5
-
 post = False
 last_sub_id = prev_submissions()
 
@@ -65,7 +61,7 @@ if not last_sub_id:
 else:
     log.info("Last posted submission is {}".format(last_sub_id))
 
-r = praw.Reddit(user_agent="Dank Doggo by Harsha :D",
+r = praw.Reddit(user_agent="Dank Doggo by Harsha :D", 
                 client_id=os.environ.get('CLIENT_ID'),
                 client_secret=os.environ.get('CLIENT_SECRET'),
                 username=os.environ.get('RUSERNAME'),
@@ -74,8 +70,9 @@ r.read_only = True
 subreddit = r.subreddit(sub)
 
 bot = telegram.Bot(token=token)
+# for submission in subreddit.stream.submissions():
+#     print(submission.url)
 
-## SCRIPT 6
 while True:
     try:
         for submission in subreddit.hot():
@@ -97,9 +94,9 @@ while True:
                 bot.sendPhoto(chat_id=channel, photo=submission.url, caption=message)
                 # bot.sendMessage(chat_id=channel, parse_mode=telegram.ParseMode.HTML, text=message)
                 write_submissions(submission.id)
-                sleep(600)
+                sleep(300)
             except Exception as e:
                 log.exception("Error parsing {}".format(link))
     except Exception as e:
         log.exception("Error fetching new submissions, restarting in 10 secs")
-        sleep(30)
+        sleep(10)
