@@ -17,7 +17,7 @@ credentials["token"] = os.environ.get('TOKEN')
 credentials["subreddit"] = os.environ.get('SUB')
 credentials["channel"] = os.environ.get('CHANNEL')
 
-log = logging.getLogger('doggo')
+log = logging.getLogger('RPost2T')
 log.setLevel(logging.DEBUG)
 
 ch = logging.StreamHandler(sys.stdout)
